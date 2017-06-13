@@ -60,7 +60,7 @@ class IGSignUpViewController : UIViewController, UIImagePickerControllerDelegate
             let alertController = UIAlertController(title: "提示", message: "所有不能为空", preferredStyle: .alert)
             let alertAction = UIAlertAction(title: "OK", style: .default, handler: nil)
             alertController.addAction(alertAction)
-            self .present(alertController, animated: true, completion: nil)
+            self.present(alertController, animated: true, completion: nil)
             return
         }
         
@@ -68,11 +68,34 @@ class IGSignUpViewController : UIViewController, UIImagePickerControllerDelegate
             let alertController = UIAlertController(title: "提示", message: "两次密码不一致", preferredStyle: .alert)
             let alertAction = UIAlertAction(title: "OK", style: .default, handler: nil)
             alertController.addAction(alertAction)
-            self .present(alertController, animated: true, completion: nil)
+            self.present(alertController, animated: true, completion: nil)
             return
+        }
+        
+        let user = AVUser()
+        user.username = userNameTxt.text?.lowercased()
+        user.email = emailTxt.text?.lowercased()
+        user.password = passwordTxt.text
+        
+        user["fullName"] = fullNameTxt.text?.lowercased()
+        user["bio"] = bioTxt.text?.lowercased()
+        user["web"] = webTxt.text?.lowercased()
+        user["gender"] = ""
+        let avaData = UIImageJPEGRepresentation(avaImage.image!, 0.5)
+        let avaFile = AVFile(name: "ava.jpg", data: avaData)
+        user["ava"] = avaFile
+        
+        user.signUpInBackground { (success:Bool, error:Error?) in
+            if success {
+                print("用户注册成功")
+            } else {
+                print("用户注册失败")
+                print(error?.localizedDescription as Any)
+            }
         }
     }
     
+    // MARK: - Gesture Action
     @IBAction func cancelAction(_ sender: UIButton) {
     }
 
@@ -89,7 +112,7 @@ class IGSignUpViewController : UIViewController, UIImagePickerControllerDelegate
         self.view.endEditing(true)
     }
     
-    
+    // MARK: - Notification Action
     func showKeyBoard(notification: Notification) {
         let rect = notification.userInfo![UIKeyboardFrameEndUserInfoKey] as! NSValue
         keyboard = rect.cgRectValue
